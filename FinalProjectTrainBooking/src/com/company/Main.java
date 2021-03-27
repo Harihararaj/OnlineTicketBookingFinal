@@ -3,7 +3,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-class Train{
+class Train {
     int trainNumber;
     String station;
     int noOfSeats;
@@ -12,7 +12,7 @@ class Train{
     int noOfWaitingSeatsFilled;
     String source;
     String dest;
-    Train(int trainNumber,String station,int noOfSeats,int noOfWaitingListSeats,int noOfSeatsFilled,int noOfWaitingSeatsFilled,String source,String dest){
+    Train(int trainNumber, String station, int noOfSeats, int noOfWaitingListSeats, int noOfSeatsFilled, int noOfWaitingSeatsFilled, String source, String dest){
         this.trainNumber=trainNumber;
         this.station=station;
         this.noOfSeats=noOfSeats;
@@ -68,6 +68,17 @@ public class Main {
     static int pnr = 101, p_id = 1, pt_id = 200;
     static int tn1, tn2, tn3;
     static String transit;
+
+
+
+
+
+
+
+
+
+
+
     static Scanner scan = new Scanner(System.in);
 
     public static void main(String[] args) throws ClassNotFoundException, SQLException {
