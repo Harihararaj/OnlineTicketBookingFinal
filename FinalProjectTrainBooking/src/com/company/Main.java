@@ -80,20 +80,21 @@ public class Main {
         copyTableValues(stm);
         //copyback(stm,1);
         findValuesOfPnrPassengerIdTicketId();
-        int x = 1;
-        while (x == 1) {
+        int ifYouHaveToContinue = 1;
+        while (ifYouHaveToContinue == 1) {
             System.out.println("Book Ticket:1\nCancel Ticket:2\nOccupancy Chart:3\nView Tables:4\nDisplay:5\nExit:6");
-            int n = scan.nextInt();
-            if (n == 1) {
+            int operationToBeDone = scan.nextInt();
+            if (operationToBeDone == 1) {
                 booking(stm);
-            } else if (n == 2) {
+                copyback(stm, 0);
+            } else if (operationToBeDone == 2) {
                 deleteserial();
                 copyback(stm, 0);
-            } else if (n == 3) {
+            } else if (operationToBeDone == 3) {
                 printOccupancy();
-            } else if (n == 4) {
+            } else if (operationToBeDone == 4) {
                 copyback(stm, 1);
-            } else if (n == 5) {
+            } else if (operationToBeDone == 5) {
                 display();
 
             }
@@ -101,7 +102,7 @@ public class Main {
                 break;
             }
             System.out.println("Enter 1 to continue");
-            x = scan.nextInt();
+            ifYouHaveToContinue = scan.nextInt();
         }
         System.out.println("Thanks for Using this App (:");
     }
@@ -141,12 +142,12 @@ public class Main {
                 d=ticket.get(i).dest;
             }
         }
-        int z= findingRoute(so,d,-1);
-        int v= routeFromSourceToDestination.size();
-        for(int i=0;i<v-1;i++){
+         findingRoute(so,d,-1);
+        int sizeOfRouteList = routeFromSourceToDestination.size();
+        for(int i = 0; i< sizeOfRouteList -1; i++){
             if(routeFromSourceToDestination.get(i)== routeFromSourceToDestination.get(i+1)){
                 routeFromSourceToDestination.remove(i+1);
-                v--;
+                sizeOfRouteList--;
                 i--;
             }
         }
@@ -335,10 +336,10 @@ public class Main {
         movingWaitingListSeats(i);
     }
     static void movingWaitingListSeats(int i){
-        int ssno=passengerTicket.get(i).seatNumber;
+        int seatNumber =passengerTicket.get(i).seatNumber;
         for(int k=0;k<passengerTicket.size();k++){
             if (passengerTicket.get(k).seatNumber==0 && passengerTicket.get(k).trainNumber==passengerTicket.get(i).trainNumber){
-                PassengerTicket p=new PassengerTicket(passengerTicket.get(k).pt_id,passengerTicket.get(k).p_id,ssno,passengerTicket.get(k).pnr,passengerTicket.get(k).trainNumber);
+                PassengerTicket p=new PassengerTicket(passengerTicket.get(k).pt_id,passengerTicket.get(k).p_id, seatNumber,passengerTicket.get(k).pnr,passengerTicket.get(k).trainNumber);
                 passengerTicket.set(k,p);
                 updatingMovedWaitingListSeatToFilledSeat(k);
                 break;
@@ -361,9 +362,9 @@ public class Main {
         train.set(j,t);
     }
     static void delete(int pnr){
-        int c=passengerTicket.size();
+        int sizeOfTicketTable =passengerTicket.size();
         int b=0;
-        for(int i=0;i<c-b;i++){
+        for(int i = 0; i< sizeOfTicketTable -b; i++){
 
             if(passengerTicket.get(i).pnr==pnr){
 
@@ -376,9 +377,9 @@ public class Main {
 
             }
         }
-        c=ticket.size();
+        sizeOfTicketTable =ticket.size();
         b=0;
-        for(int i=0;i<c-b;i++){
+        for(int i = 0; i< sizeOfTicketTable -b; i++){
             if(ticket.get(i).pnr==pnr){
                 ticket.remove(i);
                 i--;
@@ -434,14 +435,14 @@ public class Main {
     }
     static int bookTicketsForTheRoutes(String source, String dest){
         System.out.println("Enter Number of Tickets ");
-        int n=scan.nextInt();
+        int numberOfTicketsToBeBooked =scan.nextInt();
         int count=0;int remain=0;
         for(int i = 0; i< routeFromSourceToDestination.size(); i++){
             for(int j=0;j<train.size();j++) {
                 if(train.get(j).trainNumber== routeFromSourceToDestination.get(i)) {
                     remain = ((train.get(j).noOfSeats + train.get(j).noOfWaitingListSeats)- (train.get(j).noOfSeatsFilled + train.get(j).noOfWaitingSeatsFilled));
 
-                    if (n <= remain) {
+                    if (numberOfTicketsToBeBooked <= remain) {
                         count++;
                     }
                 }
@@ -453,14 +454,14 @@ public class Main {
             Ticket t=new Ticket(pnr,source,dest);
             ticket.add(t);
 
-            while(n!=0){
+            while(numberOfTicketsToBeBooked !=0){
                 System.out.println("Enter the Passenger name");
                 String name=scan.next();
                 p_id++;
                 Passenger p=new Passenger(p_id,name);
                 passenger.add(p);
                 bookingTicket();
-                n--;
+                numberOfTicketsToBeBooked--;
             }
             System.out.println("Your Ticket is Successfully Booked");
             displayTicketUsingPnr(pnr);
@@ -512,15 +513,15 @@ public class Main {
                             s2 = s2.substring(1, s2.length() - 1);
                             String[] str1 = s1.split(",");
                             String[] str2 = s2.split(",");
-                            if(comparer(str1,str2)==1 && comp(str2,dest)==1){
+                            if(commonBetweenTwoStationExist(str1,str2)==1 && doesStringInStringList(str2,dest)==1){
                                 routeFromSourceToDestination.add(train.get(j).trainNumber);
-                                transitInRoute.add(equaler(str2,str1));
+                                transitInRoute.add(stringCommonBetweenTwoStringList(str2,str1));
                                 return 1;
                             }
-                            else if(comparer(str1,str2)==1){
-                                transitInRoute.add(equaler(str2,str1));
+                            else if(commonBetweenTwoStationExist(str1,str2)==1){
+                                transitInRoute.add(stringCommonBetweenTwoStringList(str2,str1));
                                 routeFromSourceToDestination.add(train.get(j).trainNumber);
-                                return findingRoute(equaler(str2,str1),dest,i);
+                                return findingRoute(stringCommonBetweenTwoStringList(str2,str1),dest,i);
 
                             }
 
@@ -532,7 +533,7 @@ public class Main {
         return 0;
     }
 
-    static int comparer(String[] str1,String[] str2){
+    static int commonBetweenTwoStationExist(String[] str1, String[] str2){
 
 
         for(int i=0;i<str1.length;i++){
@@ -545,7 +546,7 @@ public class Main {
         }
         return 0;
     }
-    static int comp(String[] str1,String s){
+    static int doesStringInStringList(String[] str1, String s){
         for(int i=0;i<str1.length;i++){
             if(str1[i].equals(s)){
                 //System.out.println(str1[i]);
@@ -554,7 +555,7 @@ public class Main {
         }
         return 0;
     }
-    static String equaler(String[] str1,String[] str2){
+    static String stringCommonBetweenTwoStringList(String[] str1, String[] str2){
         for(int i=0;i<str1.length;i++){
             for(int j=0;j<str2.length;j++){
                 if(str1[i].equals(str2[j]))
