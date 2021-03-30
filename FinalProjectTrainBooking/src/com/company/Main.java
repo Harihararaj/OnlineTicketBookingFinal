@@ -240,9 +240,6 @@ public class Main {
             }
             findingRoute(source, destination,-1);
             int v= routeFromSourceToDestination.size();
-            for (Integer integer : routeFromSourceToDestination) {
-                System.out.println(integer);
-            }
             System.out.println();
             for(int i=0;i<v-1;i++){
                 if(routeFromSourceToDestination.get(i).equals(routeFromSourceToDestination.get(i + 1))){
@@ -251,9 +248,7 @@ public class Main {
                     i--;
                 }
             }
-            for (Integer integer : routeFromSourceToDestination) {
-                System.out.println(integer);
-            }
+
             displayTicketUsingPnr(pnrToDelete);
             routeFromSourceToDestination.clear();
             transitInRoute.clear();
