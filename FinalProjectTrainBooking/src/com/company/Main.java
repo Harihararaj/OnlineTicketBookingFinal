@@ -24,7 +24,7 @@ class Train {
     }
 }
 class Passenger{
-    int p_id;//Primary key
+    int p_id;
     String name;
     Passenger(int p_id,String name){
         this.p_id=p_id;
@@ -32,7 +32,7 @@ class Passenger{
     }
 }
 class Ticket{
-    int pnr;//Primary Key
+    int pnr;
     String source;
     String dest;
     Ticket(int pnr,String source,String dest){
@@ -42,10 +42,10 @@ class Ticket{
     }
 }
 class PassengerTicket{
-    int pt_id;//pri
-    int p_id;//FK
+    int pt_id;
+    int p_id;
     int seatNumber;
-    int pnr;//Foreign key;
+    int pnr;
     int trainNumber;
     PassengerTicket(int pt_id,int p_id,int seatNumber,int pnr,int trainNumber){
         this.pt_id=pt_id;
@@ -57,40 +57,36 @@ class PassengerTicket{
 }
 public class Main {
 
-    static ArrayList<Train> train = new ArrayList<Train>();
-    static ArrayList<Passenger> passenger = new ArrayList<Passenger>();
-    static ArrayList<Ticket> ticket = new ArrayList<Ticket>();
-    static ArrayList<PassengerTicket> passengerTicket = new ArrayList<PassengerTicket>();
-    static ArrayList<Integer> routeFromSourceToDestination =new ArrayList<Integer>();
+    static ArrayList<Train> train = new ArrayList<>();
+    static ArrayList<Passenger> passenger = new ArrayList<>();
+    static ArrayList<Ticket> ticket = new ArrayList<>();
+    static ArrayList<PassengerTicket> passengerTicket = new ArrayList<>();
+    static ArrayList<Integer> routeFromSourceToDestination = new ArrayList<>();
 
-    static ArrayList<String> transitInRoute =new ArrayList<String>();
+    static ArrayList<String> transitInRoute = new ArrayList<>();
     static int pnr = 10, p_id = 1, pt_id = 200;
-    static int tn1, tn2, tn3;
     static Scanner scan = new Scanner(System.in);
 
-    public static void main(String[] args) throws ClassNotFoundException, SQLException {
-        // write your code here
+    public static void main(String[] args) throws ClassNotFoundException, SQLException, IllegalStateException {
+
         Class.forName("org.sqlite.JDBC");
         Connection conn = DriverManager.getConnection("jdbc:sqlite:reference89.db");
         Statement stm = conn.createStatement();
-        ResultSet rs = null;
 
         createTable(stm);
 
 
-        //copyback(stm,1);
-
         copyTableValues(stm);
         int pnr1=0,pt_idd=0,p_idd=0;
-        for (int q = 0; q < passengerTicket.size(); q++) {
-            if(passengerTicket.get(q).pnr>pnr1){
-                pnr1=passengerTicket.get(q).pnr;
+        for (PassengerTicket value : passengerTicket) {
+            if (value.pnr > pnr1) {
+                pnr1 = value.pnr;
             }
-            if(passengerTicket.get(q).p_id>p_idd){
-                p_idd=passengerTicket.get(q).p_id;
+            if (value.p_id > p_idd) {
+                p_idd = value.p_id;
             }
-            if(passengerTicket.get(q).pt_id>pt_idd){
-                pt_idd=passengerTicket.get(q).pt_id;
+            if (value.pt_id > pt_idd) {
+                pt_idd = value.pt_id;
             }
         }
         pnr=pnr1+10;
@@ -110,29 +106,23 @@ public class Main {
             System.out.println("Book Ticket:1\nCancel Ticket:2\nOccupancy Chart:3\nView Tables:4\nDisplay:5\nExit:6");
             int operationToBeDone = scan.nextInt();
             switch (operationToBeDone) {
-                case 1: {
+                case 1 -> {
                     booking(stm);
                     copyback(stm, 0);
-                    break;
                 }
-                case 2: {
+                case 2 -> {
                     deleteserial();
                     copyback(stm, 0);
-                    break;
                 }
-                case 3:{
+                case 3 -> {
                     printOccupancy();
-                    break;
-                } case 4: {
-                    copyback(stm, 1);
-                    break;
-                } case 5 :{
-                    display();
-                    break;
-
-                } case 6:{
-                    break;
                 }
+                case 4 -> copyback(stm, 1);
+                case 5 -> display();
+                case 6 -> {
+                }
+
+                default -> throw new IllegalStateException("Unexpected value: " + operationToBeDone);
             }
             System.out.println("Enter 1 to continue");
             ifYouHaveToContinue = scan.nextInt();
@@ -141,8 +131,8 @@ public class Main {
     }
     static void printOccupancy(){
         System.out.println("The Train numbers are :");
-        for(int i=0;i<train.size();i++){
-            System.out.println("Train : "+train.get(i).trainNumber);
+        for (Train value : train) {
+            System.out.println("Train : " + value.trainNumber);
         }
         System.out.println("Enter the Train number to see the Occupancy chart :");
         int trainNumber=scan.nextInt();
@@ -161,7 +151,7 @@ public class Main {
          findingRoute(so,d,-1);
         int sizeOfRouteList = routeFromSourceToDestination.size();
         for(int i = 0; i< sizeOfRouteList -1; i++){
-            if(routeFromSourceToDestination.get(i)== routeFromSourceToDestination.get(i+1)){
+            if(routeFromSourceToDestination.get(i).equals(routeFromSourceToDestination.get(i + 1))){
                 routeFromSourceToDestination.remove(i+1);
                 sizeOfRouteList--;
                 i--;
@@ -181,7 +171,6 @@ public class Main {
         System.out.println("Enter destination");
         String dest=scan.next();
         if(findingRoute(source,dest,-1)==1) {
-            int c=0;
             deletingDuplicateRoute();
             transitInRoute.add(dest);
             transitInRoute.add(0,source);
@@ -207,7 +196,7 @@ public class Main {
     static void deletingDuplicateRoute(){
         int v= routeFromSourceToDestination.size();
         for(int i=0;i<v-1;i++){
-            if(routeFromSourceToDestination.get(i)== routeFromSourceToDestination.get(i+1)){
+            if(routeFromSourceToDestination.get(i).equals(routeFromSourceToDestination.get(i + 1))){
                 routeFromSourceToDestination.remove(i+1);
                 v--;
                 i--;
@@ -225,9 +214,10 @@ public class Main {
 
         int pnrToDelete = scan.nextInt();
         int flag = 0;
-        for (int i = 0; i < ticket.size(); i++) {
-            if (pnrToDelete == ticket.get(i).pnr) {
+        for (Ticket value : ticket) {
+            if (pnrToDelete == value.pnr) {
                 flag = 1;
+                break;
             }
         }
         if (flag == 0)
@@ -237,16 +227,16 @@ public class Main {
         else
         {
             String source =null, destination =null;
-            for(int i=0;i<ticket.size();i++){
-                if(ticket.get(i).pnr== pnrToDelete){
-                    source =ticket.get(i).source;
-                    destination =ticket.get(i).dest;
+            for (Ticket item : ticket) {
+                if (item.pnr == pnrToDelete) {
+                    source = item.source;
+                    destination = item.dest;
                 }
             }
-            int z= findingRoute(source, destination,-1);
+            findingRoute(source, destination,-1);
             int v= routeFromSourceToDestination.size();
             for(int i=0;i<v-1;i++){
-                if(routeFromSourceToDestination.get(i)== routeFromSourceToDestination.get(i+1)){
+                if(routeFromSourceToDestination.get(i).equals(routeFromSourceToDestination.get(i + 1))){
                     routeFromSourceToDestination.remove(i+1);
                     v--;
                     i--;
@@ -259,13 +249,10 @@ public class Main {
             int c = scan.nextInt();
             if (c == 1) {
                 delete(pnrToDelete);
-                int counter=0;
-                if(counter==0){
-                    for(int i=0;i<ticket.size();i++){
-                        if(ticket.get(i).pnr== pnrToDelete){
-                            ticket.remove(i);
-                            break;
-                        }
+                for(int i=0;i<ticket.size();i++){
+                    if(ticket.get(i).pnr== pnrToDelete){
+                        ticket.remove(i);
+                        break;
                     }
                 }
                 System.out.println("All the seats in the particular pnr is deleted");
@@ -274,15 +261,13 @@ public class Main {
             {
                 System.out.println("Enter the Serial number");
                 int s = scan.nextInt();
-                int count = 0;
-                int ptt_id = (int) PassengerIdOfTickets.get(s - 1);
+                int ptt_id = PassengerIdOfTickets.get(s - 1);
                 PassengerIdOfTickets.clear();
-                int ptid=ptt_id;
-                int pnrr=0;
+                int pnr1=0;
                 int p_id = 0;
-                for(int i=0;i<passengerTicket.size();i++){
-                    if(passengerTicket.get(i).pt_id==ptid){
-                        p_id=passengerTicket.get(i).p_id;
+                for (PassengerTicket value : passengerTicket) {
+                    if (value.pt_id == ptt_id) {
+                        p_id = value.p_id;
                     }
                 }
                 int si=passengerTicket.size();
@@ -294,14 +279,15 @@ public class Main {
                     }
                 }
                 int counter=0;
-                for(int i=0;i<passengerTicket.size();i++){
-                    if(passengerTicket.get(i).pnr==pnrr){
-                        counter=1;
+                for (PassengerTicket value : passengerTicket) {
+                    if (value.pnr == pnr1) {
+                        counter = 1;
+                        break;
                     }
                 }
                 if(counter==0){
                     for(int i=0;i<ticket.size();i++){
-                        if(ticket.get(i).pnr==pnrr){
+                        if(ticket.get(i).pnr==pnr1){
                             ticket.remove(i);
                             break;
                         }
@@ -313,10 +299,10 @@ public class Main {
         }
 
     }
-    static void deleteusingptid(int ptid){
+    static void deleteusingptid(int ticketId){
 
         for(int i=0;i<passengerTicket.size();i++){
-            if(passengerTicket.get(i).pt_id==ptid){
+            if(passengerTicket.get(i).pt_id==ticketId){
                 System.out.println(passengerTicket.get(i).pt_id);
                 deletePassengerFromItsTable(i);
                 findingTrainAndUpdatingTheNumberOfSeats(i);
@@ -330,7 +316,7 @@ public class Main {
             if (passenger.get(j).p_id==passengerTicket.get(i).p_id){
                 System.out.println(passenger.get(j).name+" is deleted");
                 passenger.remove(j);
-                //break;
+                break;
             }
         }
     }
@@ -409,15 +395,14 @@ public class Main {
                 if(passengerTicket.get(i).seatNumber==0){
                     Train t=new Train(train.get(j).trainNumber,train.get(j).station,train.get(j).noOfSeats,train.get(j).noOfWaitingListSeats,train.get(j).noOfSeatsFilled,(train.get(j).noOfWaitingSeatsFilled-1),train.get(j).source,train.get(j).dest);
                     train.set(j,t);
-                    break;
                 }
                 else{
                     int sno=passengerTicket.get(i).seatNumber;
                     Train t=new Train(train.get(j).trainNumber,train.get(j).station,train.get(j).noOfSeats,train.get(j).noOfWaitingListSeats,(train.get(j).noOfSeatsFilled-1),train.get(j).noOfWaitingSeatsFilled,train.get(j).source,train.get(j).dest);
                     train.set(j,t);
                     findingWaitingListAndUpdating(i,sno);
-                    break;
                 }
+                break;
             }
         }
     }
@@ -452,11 +437,11 @@ public class Main {
     static int bookTicketsForTheRoutes(String source, String dest){
         System.out.println("Enter Number of Tickets ");
         int numberOfTicketsToBeBooked =scan.nextInt();
-        int count=0;int remain=0;
-        for(int i = 0; i< routeFromSourceToDestination.size(); i++){
-            for(int j=0;j<train.size();j++) {
-                if(train.get(j).trainNumber== routeFromSourceToDestination.get(i)) {
-                    remain = ((train.get(j).noOfSeats + train.get(j).noOfWaitingListSeats)- (train.get(j).noOfSeatsFilled + train.get(j).noOfWaitingSeatsFilled));
+        int count=0;
+        for (Integer integer : routeFromSourceToDestination) {
+            for (Train value : train) {
+                if (value.trainNumber == integer) {
+                    int remain = ((value.noOfSeats + value.noOfWaitingListSeats) - (value.noOfSeatsFilled + value.noOfWaitingSeatsFilled));
 
                     if (numberOfTicketsToBeBooked <= remain) {
                         count++;
@@ -488,21 +473,20 @@ public class Main {
         }
     }
     static void bookingTicket(){
-        for(int i = 0; i< routeFromSourceToDestination.size(); i++){
-            for(int j=0;j<train.size();j++){
-                if(train.get(j).trainNumber== routeFromSourceToDestination.get(i)){
-                    if(train.get(j).noOfSeatsFilled<train.get(j).noOfSeats){
-                        int seat=findseat(j,train.get(j).trainNumber);
+        for (Integer integer : routeFromSourceToDestination) {
+            for (int j = 0; j < train.size(); j++) {
+                if (train.get(j).trainNumber == integer) {
+                    if (train.get(j).noOfSeatsFilled < train.get(j).noOfSeats) {
+                        int seat = findSeatNo(j, train.get(j).trainNumber);
                         pt_id++;
-                        PassengerTicket p1=new PassengerTicket(pt_id,p_id,seat,pnr,train.get(j).trainNumber);
+                        PassengerTicket p1 = new PassengerTicket(pt_id, p_id, seat, pnr, train.get(j).trainNumber);
                         passengerTicket.add(p1);
-                        train.get(j).noOfSeatsFilled=train.get(j).noOfSeatsFilled+1;
-                    }
-                    else{
+                        train.get(j).noOfSeatsFilled = train.get(j).noOfSeatsFilled + 1;
+                    } else {
                         pt_id++;
-                        PassengerTicket p1=new PassengerTicket(pt_id,p_id,0,pnr,train.get(j).trainNumber);
+                        PassengerTicket p1 = new PassengerTicket(pt_id, p_id, 0, pnr, train.get(j).trainNumber);
                         passengerTicket.add(p1);
-                        train.get(j).noOfWaitingSeatsFilled=train.get(j).noOfWaitingSeatsFilled+1;
+                        train.get(j).noOfWaitingSeatsFilled = train.get(j).noOfWaitingSeatsFilled + 1;
                     }
                 }
             }
@@ -511,7 +495,6 @@ public class Main {
     static int findingRoute(String source, String dest, int f) {
         for (int i = 0; i < train.size(); i++) {
             if(i!=f) {
-                int flag=0;
                 String s1 = train.get(i).station;
                 if(s1.contains(source) && s1.contains(dest)){
                     routeFromSourceToDestination.add(train.get(i).trainNumber);
@@ -552,10 +535,9 @@ public class Main {
     static int commonBetweenTwoStationExist(String[] str1, String[] str2){
 
 
-        for(int i=0;i<str1.length;i++){
-            for(int j=0;j<str2.length;j++){
-                if(str1[i].equals(str2[j]))
-                {
+        for (String s : str1) {
+            for (String value : str2) {
+                if (s.equals(value)) {
                     return 1;
                 }
             }
@@ -563,33 +545,31 @@ public class Main {
         return 0;
     }
     static int doesStringInStringList(String[] str1, String s){
-        for(int i=0;i<str1.length;i++){
-            if(str1[i].equals(s)){
-                //System.out.println(str1[i]);
+        for (String value : str1) {
+            if (value.equals(s)) {
                 return 1;
             }
         }
         return 0;
     }
     static String stringCommonBetweenTwoStringList(String[] str1, String[] str2){
-        for(int i=0;i<str1.length;i++){
-            for(int j=0;j<str2.length;j++){
-                if(str1[i].equals(str2[j]))
-                {
-                    return str1[i];
+        for (String s : str1) {
+            for (String value : str2) {
+                if (s.equals(value)) {
+                    return s;
                     //System.out.println(str1[i]);
                 }
             }
         }
         return null;
     }
-    static Integer findseat(int j,int t){
+    static Integer findSeatNo(int j,int t){
         for(int i=1;i<=train.get(j).noOfSeats;i++){
             int flag=0;
-            for(int k=0;k<passengerTicket.size();k++){
-                if(passengerTicket.get(k).trainNumber==t){
-                    if(passengerTicket.get(k).seatNumber==i){
-                        flag=1;
+            for (PassengerTicket value : passengerTicket) {
+                if (value.trainNumber == t) {
+                    if (value.seatNumber == i) {
+                        flag = 1;
                     }
                 }
             }
@@ -600,7 +580,6 @@ public class Main {
         return null;
     }
     static void createTable(Statement stm) throws SQLException {
-        ResultSet rs;
         stm.executeUpdate("CREATE TABLE IF NOT EXISTS passenger(p_id INT PRIMARY KEY,name VARCHAR(20))");
         stm.executeUpdate("CREATE TABLE IF NOT EXISTS ticket( pnr INT PRIMARY KEY,source VARCHAR(20),dest VARCHAR(20) )");
         stm.executeUpdate("CREATE TABLE IF NOT EXISTS passengerticket( pt_id INT PRIMARY KEY,p_id INT ,seatNumber INT,pnr INT,trainNumber INT )");
@@ -652,17 +631,17 @@ public class Main {
         stm.executeUpdate("DELETE FROM passenger");
         stm.executeUpdate("DELETE FROM passengerticket");
         stm.executeUpdate("DELETE FROM ticket");
-        for(int i=0;i<train.size();i++){
-            stm.executeUpdate("INSERT INTO train VALUES("+train.get(i).trainNumber+",'"+train.get(i).station+"',"+train.get(i).noOfSeats+","+train.get(i).noOfWaitingListSeats+","+train.get(i).noOfSeatsFilled+","+train.get(i).noOfWaitingSeatsFilled+",'"+train.get(i).source+"','"+train.get(i).dest+"')");
+        for (Train value : train) {
+            stm.executeUpdate("INSERT INTO train VALUES(" + value.trainNumber + ",'" + value.station + "'," + value.noOfSeats + "," + value.noOfWaitingListSeats + "," + value.noOfSeatsFilled + "," + value.noOfWaitingSeatsFilled + ",'" + value.source + "','" + value.dest + "')");
         }
-        for(int i=0;i<passenger.size();i++){
-            stm.executeUpdate("INSERT INTO passenger VALUES("+passenger.get(i).p_id+",'"+passenger.get(i).name+"')");
+        for (Passenger value : passenger) {
+            stm.executeUpdate("INSERT INTO passenger VALUES(" + value.p_id + ",'" + value.name + "')");
         }
-        for(int i=0;i<passengerTicket.size();i++){
-            stm.executeUpdate("INSERT INTO passengerticket VALUES("+passengerTicket.get(i).pt_id+","+passengerTicket.get(i).p_id+","+passengerTicket.get(i).seatNumber+","+passengerTicket.get(i).pnr+","+passengerTicket.get(i).trainNumber+")");
+        for (PassengerTicket value : passengerTicket) {
+            stm.executeUpdate("INSERT INTO passengerticket VALUES(" + value.pt_id + "," + value.p_id + "," + value.seatNumber + "," + value.pnr + "," + value.trainNumber + ")");
         }
-        for(int i=0;i<ticket.size();i++){
-            stm.executeUpdate("INSERT INTO ticket VALUES("+ticket.get(i).pnr+",'"+ticket.get(i).source+"','"+ticket.get(i).dest+"')");
+        for (Ticket value : ticket) {
+            stm.executeUpdate("INSERT INTO ticket VALUES(" + value.pnr + ",'" + value.source + "','" + value.dest + "')");
         }
         if(toPrintIfNeeded==1) {
             ResultSet rs;
@@ -715,12 +694,12 @@ public class Main {
         return passengerTicket.get(j).trainNumber == train.get(i).trainNumber;
     }
     static void printingPassengerNames(int j){
-        for (int k = 0; k < passenger.size(); k++) {
-            if (passengerTicket.get(j).p_id == passenger.get(k).p_id) {
+        for (Passenger value : passenger) {
+            if (passengerTicket.get(j).p_id == value.p_id) {
                 if (isPassengerWaiting(j)) {
-                    System.out.println("Name:" + passenger.get(k).name + "\t" + "Seat number: Waiting List");
+                    System.out.println("Name:" + value.name + "\t" + "Seat number: Waiting List");
                 } else {
-                    System.out.println("Name:" + passenger.get(k).name + "\t" + "Seat number:" + passengerTicket.get(j).seatNumber);
+                    System.out.println("Name:" + value.name + "\t" + "Seat number:" + passengerTicket.get(j).seatNumber);
                 }
             }
         }
@@ -731,17 +710,17 @@ public class Main {
     static boolean doesTrainHaveSeats(int i,int trainNumber){
         return train.get(i).noOfSeatsFilled!=0 && train.get(i).trainNumber==trainNumber;
     }
-    static ArrayList<Integer> PassengerIdOfTickets =new ArrayList<Integer>();
+    static ArrayList<Integer> PassengerIdOfTickets =new ArrayList<>();
     static void displayTicketUsingPnr(int originalPnr){
 
 
         int serial=1;
-        for(int i=0;i<ticket.size();i++){
-            if(ticket.get(i).pnr== originalPnr){
-                System.out.println("PNR:"+ticket.get(i).pnr);
-                System.out.println("Source:"+ticket.get(i).source);
-                System.out.println("Destination:"+ticket.get(i).dest);
-                serial = findingTrainsInRouteFromSourceToDestination(originalPnr,serial);
+        for (Ticket value : ticket) {
+            if (value.pnr == originalPnr) {
+                System.out.println("PNR:" + value.pnr);
+                System.out.println("Source:" + value.source);
+                System.out.println("Destination:" + value.dest);
+                serial = findingTrainsInRouteFromSourceToDestination(originalPnr, serial);
             }
         }
     }
@@ -775,9 +754,9 @@ public class Main {
         return passengerTicket.get(k).trainNumber == routeFromSourceToDestination.get(j) && passengerTicket.get(k).pnr == originalPnr;
     }
     static int printingPassengerWithSeatNumber(int serial,int k){
-        for(int l=0;l<passenger.size();l++){
-            if(passenger.get(l).p_id==passengerTicket.get(k).p_id){
-                System.out.println(serial+".Passenger Name:"+passenger.get(l).name+"\tSeat Number:"+passengerTicket.get(k).seatNumber);
+        for (Passenger value : passenger) {
+            if (value.p_id == passengerTicket.get(k).p_id) {
+                System.out.println(serial + ".Passenger Name:" + value.name + "\tSeat Number:" + passengerTicket.get(k).seatNumber);
                 serial++;
 
             }
@@ -785,9 +764,9 @@ public class Main {
         return serial;
     }
     static int printingPassengerWithWaitingList(int serial,int k){
-        for(int l=0;l<passenger.size();l++){
-            if(passenger.get(l).p_id==passengerTicket.get(k).p_id){
-                System.out.println(serial+".Passenger Name:"+passenger.get(l).name+"\tSeat Number: Waiting List");
+        for (Passenger value : passenger) {
+            if (value.p_id == passengerTicket.get(k).p_id) {
+                System.out.println(serial + ".Passenger Name:" + value.name + "\tSeat Number: Waiting List");
                 serial++;
             }
         }
