@@ -109,22 +109,30 @@ public class Main {
         while (ifYouHaveToContinue == 1) {
             System.out.println("Book Ticket:1\nCancel Ticket:2\nOccupancy Chart:3\nView Tables:4\nDisplay:5\nExit:6");
             int operationToBeDone = scan.nextInt();
-            if (operationToBeDone == 1) {
-                booking(stm);
-                copyback(stm, 0);
-            } else if (operationToBeDone == 2) {
-                deleteserial();
-                copyback(stm, 0);
-            } else if (operationToBeDone == 3) {
-                printOccupancy();
-            } else if (operationToBeDone == 4) {
-                copyback(stm, 1);
-            } else if (operationToBeDone == 5) {
-                display();
+            switch (operationToBeDone) {
+                case 1: {
+                    booking(stm);
+                    copyback(stm, 0);
+                    break;
+                }
+                case 2: {
+                    deleteserial();
+                    copyback(stm, 0);
+                    break;
+                }
+                case 3:{
+                    printOccupancy();
+                    break;
+                } case 4: {
+                    copyback(stm, 1);
+                    break;
+                } case 5 :{
+                    display();
+                    break;
 
-            }
-            else {
-                break;
+                } case 6:{
+                    break;
+                }
             }
             System.out.println("Enter 1 to continue");
             ifYouHaveToContinue = scan.nextInt();
