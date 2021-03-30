@@ -64,22 +64,47 @@ public class Main {
     static ArrayList<Integer> routeFromSourceToDestination =new ArrayList<Integer>();
 
     static ArrayList<String> transitInRoute =new ArrayList<String>();
-    static int pnr = 101, p_id = 1, pt_id = 200;
+    static int pnr = 10, p_id = 1, pt_id = 200;
     static int tn1, tn2, tn3;
     static Scanner scan = new Scanner(System.in);
 
     public static void main(String[] args) throws ClassNotFoundException, SQLException {
         // write your code here
         Class.forName("org.sqlite.JDBC");
-        Connection conn = DriverManager.getConnection("jdbc:sqlite:reference75.db");
+        Connection conn = DriverManager.getConnection("jdbc:sqlite:reference89.db");
         Statement stm = conn.createStatement();
         ResultSet rs = null;
 
-        //createTable(stm);
+        createTable(stm);
+
+
+        //copyback(stm,1);
 
         copyTableValues(stm);
-        //copyback(stm,1);
-        findValuesOfPnrPassengerIdTicketId();
+        int pnr1=0,pt_idd=0,p_idd=0;
+        for (int q = 0; q < passengerTicket.size(); q++) {
+            if(passengerTicket.get(q).pnr>pnr1){
+                pnr1=passengerTicket.get(q).pnr;
+            }
+            if(passengerTicket.get(q).p_id>p_idd){
+                p_idd=passengerTicket.get(q).p_id;
+            }
+            if(passengerTicket.get(q).pt_id>pt_idd){
+                pt_idd=passengerTicket.get(q).pt_id;
+            }
+        }
+        pnr=pnr1+10;
+        pt_id=pt_idd+10;
+        p_id=p_idd+10;
+        System.out.println(pnr);
+        if(pnr==10) {
+            tableValues(stm);
+            copyTableValues(stm);
+        }
+
+
+
+
         int ifYouHaveToContinue = 1;
         while (ifYouHaveToContinue == 1) {
             System.out.println("Book Ticket:1\nCancel Ticket:2\nOccupancy Chart:3\nView Tables:4\nDisplay:5\nExit:6");
@@ -114,23 +139,6 @@ public class Main {
         System.out.println("Enter the Train number to see the Occupancy chart :");
         int trainNumber=scan.nextInt();
         occupancy(trainNumber);
-    }
-    static void findValuesOfPnrPassengerIdTicketId(){
-        int pnr1=0,pt_idd=0,p_idd=0;
-        for (int q = 0; q < passengerTicket.size(); q++) {
-            if(passengerTicket.get(q).pnr>pnr1){
-                pnr1=passengerTicket.get(q).pnr;
-            }
-            if(passengerTicket.get(q).p_id>p_idd){
-                p_idd=passengerTicket.get(q).p_id;
-            }
-            if(passengerTicket.get(q).pt_id>pt_idd){
-                pt_idd=passengerTicket.get(q).pt_id;
-            }
-        }
-        pnr=pnr1+10;
-        pt_id=pt_idd+10;
-        p_id=p_idd+10;
     }
     static void display(){
         System.out.println("Enter your pnr number to display the ticket");
@@ -585,20 +593,26 @@ public class Main {
     }
     static void createTable(Statement stm) throws SQLException {
         ResultSet rs;
-        stm.executeUpdate("CREATE TABLE passenger(p_id INT PRIMARY KEY,name VARCHAR(20))");
-        stm.executeUpdate("CREATE TABLE ticket( pnr INT PRIMARY KEY,source VARCHAR(20),dest VARCHAR(20) )");
-        stm.executeUpdate("CREATE TABLE passengerticket( pt_id INT PRIMARY KEY,p_id INT ,seatNumber INT,pnr INT,trainNumber INT )");
-        stm.executeUpdate("CREATE TABLE train(trainNumber INT PRIMARY KEY,station VARCHAR,noOfSeats INT,noOfWaitingListSeats INT,noOfSeatsFilled INT,noOfWaitingListSeatsFilled INT,source VARCHAR,dest VARCHAR)");
-        stm.executeUpdate("INSERT INTO train VALUES(1,'(A,B,C,D,E)',8,2,0,0,'A','E')");
-        stm.executeUpdate("INSERT INTO train VALUES(2,'(X,Y,C)',8,2,0,0,'X','C')");
-        stm.executeUpdate("INSERT INTO train VALUES(3,'(W,R,X)',8,2,0,0,'W','X')");
-        stm.executeUpdate("INSERT INTO train VALUES(4,'(Q,Z,W)',8,2,0,0,'Q','W')");
-        stm.executeUpdate("INSERT INTO train VALUES(5,'(N,M,Q)',8,2,0,0,'N','Q')");
-        stm.executeUpdate("INSERT INTO train VALUES(6,'(F,P,N)',8,2,0,0,'F','N')");
-        stm.executeUpdate("INSERT INTO train VALUES(7,'(K,S,F)',8,2,0,0,'Z','F')");
-        stm.executeUpdate("INSERT INTO train VALUES(8,'(T,U,K)',8,2,0,0,'T','Z')");
-        stm.executeUpdate("INSERT INTO train VALUES(9,'(V,I,T)',8,2,0,0,'V','T')");
-        stm.executeUpdate("INSERT INTO train VALUES(10,'(G,H,V)',8,2,0,0,'G','V')");
+        stm.executeUpdate("CREATE TABLE IF NOT EXISTS passenger(p_id INT PRIMARY KEY,name VARCHAR(20))");
+        stm.executeUpdate("CREATE TABLE IF NOT EXISTS ticket( pnr INT PRIMARY KEY,source VARCHAR(20),dest VARCHAR(20) )");
+        stm.executeUpdate("CREATE TABLE IF NOT EXISTS passengerticket( pt_id INT PRIMARY KEY,p_id INT ,seatNumber INT,pnr INT,trainNumber INT )");
+        stm.executeUpdate("CREATE TABLE IF NOT EXISTS train(trainNumber INT PRIMARY KEY,station VARCHAR,noOfSeats INT,noOfWaitingListSeats INT,noOfSeatsFilled INT,noOfWaitingListSeatsFilled INT,source VARCHAR,dest VARCHAR)");
+    }
+    static void insertingIntoTrainTable(Statement stm,int trainNumber,String station,String source,String dest) throws SQLException {
+        stm.executeUpdate("INSERT INTO train VALUES("+trainNumber+",'"+station+"',8,2,0,0,'"+source+"','"+dest+"')");
+    }
+    static void tableValues(Statement stm) throws SQLException {
+
+        insertingIntoTrainTable(stm,1,"(A,B,C,D,E)","A","E");
+        insertingIntoTrainTable(stm,2,"(X,Y,C)","X","C");
+        insertingIntoTrainTable(stm,3,"(W,R,X)","W","X");
+        insertingIntoTrainTable(stm,4,"(Q,Z,W)","Q","W");
+        insertingIntoTrainTable(stm,5,"(N,M,Q)","N","Q");
+        insertingIntoTrainTable(stm,6,"(F,P,N)","F","N");
+        insertingIntoTrainTable(stm,7,"(K,S,F)","K","F");
+        insertingIntoTrainTable(stm,8,"(T,U,K)","T","K");
+        insertingIntoTrainTable(stm,9,"(V,I,T)","V","T");
+        insertingIntoTrainTable(stm,10,"(G,H,V)","G","V");
     }
     static void copyTableValues(Statement stm) throws SQLException {
         ResultSet rs;
